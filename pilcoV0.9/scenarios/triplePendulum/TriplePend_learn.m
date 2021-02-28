@@ -17,7 +17,7 @@
 
 % 1. Initialization
 clear all; close all;
-settings_dp;                  % load scenario-specific settings
+settings_tp;                  % load scenario-specific settings
 basename = 'triplepend_';     % filename used for saving data
 
 % 2. Initial J random rollouts

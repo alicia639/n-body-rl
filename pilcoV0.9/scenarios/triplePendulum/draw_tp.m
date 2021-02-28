@@ -27,7 +27,7 @@
 %
 % Last modified: 2013-03-07
 
-function draw_dp(theta1, theta2, theta3, f1, f2, f3, cost, text1, text2, text3, M, S)
+function draw_tp(theta1, theta2, theta3, f1, f2, f3, cost, text1, text2, text3, M, S)
 %% Code
 l = 0.6;
 xmin = -2*l; 
@@ -90,7 +90,7 @@ plot([0 f1/umax*xmax],[-0.3, -0.3],'g','linewidth',10)
 plot([0 f2/umax*xmax],[-0.5, -0.5],'g','linewidth',10)
 plot([0 f3/umax*xmax],[-0.5, -0.5],'g','linewidth',10)
 % plot reward
-reward = 1-cost.fcn(cost,[0, 0, theta1, theta2]',zeros(4));
+reward = 1-cost.fcn(cost,[0, 0, 0, theta1, theta2, theta3]',zeros(6));
 plot([0 reward*xmax],[-0.7, -0.7],'y','linewidth',10)
 text(0,-0.3,'applied  torque (inner joint)')
 text(0,-0.5,'applied  torque (outer joint)')

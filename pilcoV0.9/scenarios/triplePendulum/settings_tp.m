@@ -40,15 +40,15 @@ rand('seed',1); randn('seed',1); format short; format compact;
 %  4  theta1         angle inner pendulum
 %  5  theta2         angle middle pendulum
 %  6  theta3         angle outer pendulum
-%  5  sin(theta1)    complex representation ...
-%  6  cos(theta1)    ... of angle of inner pendulum
-%  7  sin(theta2)    complex representation ...
-%  8  cos(theta2)    ... of angle of middle pendulum
-%  9  sin(theta3)    complex representation ...
-%  10  cos(theta3)    ... of angle of outer pendulum
-%  11  u1             torque applied to the inner joint
-%  12  u2             torque applied to the middle joint
-%  13  u3           torque applied to the outer joint
+%  7  sin(theta1)    complex representation ...
+%  8  cos(theta1)    ... of angle of inner pendulum
+%  9  sin(theta2)    complex representation ...
+%  10  cos(theta2)    ... of angle of middle pendulum
+%  11  sin(theta3)    complex representation ...
+%  12  cos(theta3)    ... of angle of outer pendulum
+%  13  u1             torque applied to the inner joint
+%  14  u2             torque applied to the middle joint
+%  15  u3           torque applied to the outer joint
 
 % 1b. Important indices
 % odei  indicies for the ode solver
@@ -63,8 +63,8 @@ odei = [1 2 3 4 5 6];
 augi = [];                                   
 dyno = [1 2 3 4 5 6];          
 angi = [4 5 6];                                           
-dyni = [1 2 5 6 7 8 9 10]; 
-poli = [1 2 5 6 7 8 9 10];        
+dyni = [1 2 3 7 8 9 10 11 12]; 
+poli = [1 2 3 7 8 9 10 11 12];        
 difi = [1 2 3 4 5 6];              
 
 
@@ -80,8 +80,8 @@ K = 1;                                      % no. of initial states for which we
 nc = 100;                                   % size of controller training set
 
 % 3. Set up the plant structure
-plant.dynamics = @dynamics_dp;                           % dynamics ODE function
-plant.noise = diag(ones(1,4)*0.01.^2);                   % measurement noise
+plant.dynamics = @dynamics_tp;                           % dynamics ODE function
+plant.noise = diag(ones(1,6)*0.01.^2);                   % measurement noise
 plant.dt = dt;
 plant.ctrl = @zoh;                  % controler is zero-order-hold
 plant.odei = odei;                  % indices to the varibles for the ode solver
@@ -98,7 +98,7 @@ plant.prop = @propagated;   % handle to function that propagates state over time
 % 4. Set up the policy structure
 policy.fcn = @(policy,m,s)conCat(@congp,@gSat,policy,m,s);% controller 
                                                           % representation
-policy.maxU = [2 2];                                      % max. amplitude of 
+policy.maxU = [2 2 2];                                      % max. amplitude of 
                                                           % torques
 [mm ss cc] = gTrig(mu0, S0, plant.angi);                  % represent angles 
 mm = [mu0; mm]; cc = S0*cc; ss = [S0 cc; cc' ss];         % in complex plane      
@@ -107,11 +107,11 @@ policy.p.inputs = gaussian(mm(poli), ss(poli,poli), nc)'; % init. location of
 policy.p.targets = 0.1*randn(nc, length(policy.maxU));    % init. policy targets 
                                                           % (close to zero)
 policy.p.hyp = ...                                        % initialize policy
-  repmat(log([1 1 0.7 0.7 0.7 0.7 1 0.01]'), 1,2);        % hyper-parameters
+  repmat(log([1 1 1 0.7 0.7 0.7 0.7 0.7 0.7 1 0.01]'), 1,3);        % hyper-parameters  %%% WRONG
 
 
 % 5. Set up the cost structure
-cost.fcn = @loss_dp;                        % cost function
+cost.fcn = @loss_tp;                        % cost function
 cost.gamma = 1;                             % discount factor
 cost.p = [0.5 0.5 0.5];                         % lengths of pendulums
 cost.width = 0.5;                           % cost function width

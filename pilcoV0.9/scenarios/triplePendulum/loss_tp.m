@@ -42,7 +42,7 @@
 
 %% update this
 
-function [L, dLdm, dLds, S2] = loss_dp(cost, m, s)
+function [L, dLdm, dLds, S2] = loss_tp(cost, m, s)
 %% Code
 if isfield(cost,'width'); cw = cost.width; else cw = 1; end
 if ~isfield(cost,'expl') || isempty(cost.expl); b = 0; else b =  cost.expl; end
@@ -58,7 +58,7 @@ Mds = zeros(D1,D0*D0); Sds = kron(Mdm,Mdm);
 
 % 2. Define static penalty as distance from target setpoint
 ell1 = cost.p(1); ell2 = cost.p(2); ell3 = cost.p(3); C = [ell1 0 ell2 0 ell3 0; 0 ell1 0 ell2 0 ell3];
-Q = zeros(D1); Q(D+1:D+4,D+1:D+4) = C'*C;
+Q = zeros(D1); Q(D+1:D+6,D+1:D+6) = C'*C;
 
 % 3. Trigonometric augmentation
 if D1-D0 > 0
